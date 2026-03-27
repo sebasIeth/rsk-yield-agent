@@ -1,0 +1,55 @@
+version: "3.8"
+
+services:
+  db:
+    image: postgres:16-alpine
+    restart: always
+    environment:
+      POSTGRES_USER: rsk
+      POSTGRES_PASSWORD: rsk_yield_2024
+      POSTGRES_DB: rsk_yield
+    ports:
+      - "5432:5432"
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U rsk -d rsk_yield"]
+      interval: 5s
+      timeout: 3s
+      retries: 10
+
+  agent:
+    build:
+      context: ./agent
+    restart: always
+    ports:
+      - "4001:4001"
+    environment:
+      AGENT_PORT: "4001"
+      RSK_RPC_URL: ${RSK_RPC_URL:-https://public-node.testnet.rsk.co}
+      ANTHROPIC_API_KEY: ${ANTHROPIC_API_KEY:-}
+      AGENT_PRIVATE_KEY: ${AGENT_PRIVATE_KEY:-}
+      VAULT_ADDRESS: ${VAULT_ADDRESS:-}
+      ROUTER_ADDRESS: ${ROUTER_ADDRESS:-}
+      RBTC_PRICE_USD: ${RBTC_PRICE_USD:-95000}
+    depends_on:
+      db:
+        condition: service_healthy
+
+  frontend:
+    build:
+      context: ./frontend
+    restart: always
+    ports:
+      - "4000:4000"
+    environment:
+      DATABASE_URL: postgresql://rsk:rsk_yield_2024@db:5432/rsk_yield
+      NEXT_PUBLIC_AGENT_URL: http://agent:4001
+    depends_on:
+      db:
+        condition: service_healthy
+      agent:
+        condition: service_started
+
+volumes:
+  pgdata:
