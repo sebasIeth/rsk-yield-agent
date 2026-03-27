@@ -1,0 +1,21 @@
+{
+  "name": "rsk-yield-agent",
+  "version": "1.0.0",
+  "private": true,
+  "workspaces": [
+    "contracts",
+    "agent",
+    "frontend"
+  ],
+  "scripts": {
+    "install:all": "npm install --workspaces",
+    "compile": "npm run compile -w contracts",
+    "test": "npm run test -w contracts",
+    "dev:agent": "npm run dev -w agent",
+    "dev:frontend": "npm run dev -w frontend",
+    "build:agent": "npm run build -w agent",
+    "build:frontend": "npm run build -w frontend",
+    "typecheck": "npm run typecheck -w agent && cd frontend && npx next build",
+    "deploy:testnet": "npm run deploy:testnet -w contracts"
+  }
+}

@@ -1,0 +1,30 @@
+{
+  "name": "rsk-yield-agent",
+  "version": "1.0.0",
+  "description": "RSK Yield Agent - AI-powered DeFi yield optimizer",
+  "main": "dist/index.js",
+  "scripts": {
+    "dev": "ts-node src/index.ts",
+    "build": "tsc",
+    "start": "node dist/index.js",
+    "run-once": "ts-node -e \"require('./src/scheduler').runOnce()\"",
+    "server": "ts-node src/index.ts",
+    "typecheck": "tsc --noEmit"
+  },
+  "dependencies": {
+    "@anthropic-ai/sdk": "^0.39.0",
+    "cors": "^2.8.6",
+    "dotenv": "^16.3.0",
+    "ethers": "^6.9.0",
+    "express": "^5.2.1",
+    "node-cron": "^3.0.3"
+  },
+  "devDependencies": {
+    "@types/cors": "^2.8.19",
+    "@types/express": "^5.0.6",
+    "@types/node": "^20.10.0",
+    "@types/node-cron": "^3.0.11",
+    "ts-node": "^10.9.0",
+    "typescript": "^5.3.0"
+  }
+}

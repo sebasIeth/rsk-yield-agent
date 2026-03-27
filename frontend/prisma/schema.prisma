@@ -1,0 +1,57 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id              String      @id @default(cuid())
+  address         String      @unique
+  riskProfile     String      @default("balanced")
+  preferredAssets String[]    @default(["RBTC", "DOC"])
+  createdAt       DateTime    @default(now())
+  strategies      Strategy[]
+  rebalances      Rebalance[]
+}
+
+model Strategy {
+  id              String   @id @default(cuid())
+  userAddress     String
+  allocationsJson Json
+  estimatedApy    Float
+  currentApy      Float
+  reason          String
+  status          String   @default("pending") // pending | approved | rejected | executed
+  confidence      Float
+  createdAt       DateTime @default(now())
+  user            User     @relation(fields: [userAddress], references: [address])
+
+  @@index([userAddress])
+}
+
+model Rebalance {
+  id          String   @id @default(cuid())
+  userAddress String
+  txHash      String?
+  fromJson    Json
+  toJson      Json
+  profit      Float?
+  executedAt  DateTime @default(now())
+  user        User     @relation(fields: [userAddress], references: [address])
+
+  @@index([userAddress])
+}
+
+model ApySnapshot {
+  id        String   @id @default(cuid())
+  protocol  String
+  asset     String
+  apy       Float
+  tvl       Float
+  timestamp DateTime @default(now())
+
+  @@index([protocol, asset, timestamp])
+}
