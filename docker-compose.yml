@@ -44,7 +44,7 @@ services:
       - "4000:4000"
     environment:
       DATABASE_URL: postgresql://rsk:rsk_yield_2024@db:5432/rsk_yield
-      NEXT_PUBLIC_AGENT_URL: http://agent:4002
+      AGENT_SERVICE_URL: http://agent:4002
     depends_on:
       db:
         condition: service_healthy
