@@ -23,9 +23,9 @@ services:
       context: ./agent
     restart: always
     ports:
-      - "4001:4001"
+      - "4002:4002"
     environment:
-      AGENT_PORT: "4001"
+      AGENT_PORT: "4002"
       RSK_RPC_URL: ${RSK_RPC_URL:-https://public-node.testnet.rsk.co}
       ANTHROPIC_API_KEY: ${ANTHROPIC_API_KEY:-}
       AGENT_PRIVATE_KEY: ${AGENT_PRIVATE_KEY:-}
@@ -44,7 +44,7 @@ services:
       - "4000:4000"
     environment:
       DATABASE_URL: postgresql://rsk:rsk_yield_2024@db:5432/rsk_yield
-      NEXT_PUBLIC_AGENT_URL: http://agent:4001
+      NEXT_PUBLIC_AGENT_URL: http://agent:4002
     depends_on:
       db:
         condition: service_healthy

@@ -10,7 +10,7 @@ COPY src/ ./src/
 
 RUN npm run build
 
-ENV AGENT_PORT=4001
-EXPOSE 4001
+ENV AGENT_PORT=4002
+EXPOSE 4002
 
 CMD ["node", "dist/index.js"]
