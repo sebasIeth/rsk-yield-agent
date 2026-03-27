@@ -12,7 +12,7 @@ const rootstockTestnet = defineChain({
   name: "Rootstock Testnet",
   nativeCurrency: { name: "tRBTC", symbol: "tRBTC", decimals: 18 },
   rpcUrls: {
-    default: { http: ["https://public-node.testnet.rsk.co", "https://mycrypto.testnet.rsk.co/"] },
+    default: { http: ["https://mycrypto.testnet.rsk.co/", "https://public-node.testnet.rsk.co"] },
   },
   blockExplorers: {
     default: {
