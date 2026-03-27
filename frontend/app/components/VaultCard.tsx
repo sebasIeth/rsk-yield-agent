@@ -1,8 +1,8 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { useAccount, useBalance, useWriteContract, useWaitForTransactionReceipt, useReadContract } from "wagmi";
-import { parseEther, formatEther } from "viem";
+import { useAccount, useBalance, useWriteContract, useWaitForTransactionReceipt, useReadContract, useSendTransaction } from "wagmi";
+import { parseEther, formatEther, encodeFunctionData } from "viem";
 
 const VAULT_ADDRESS = process.env.NEXT_PUBLIC_VAULT_ADDRESS as `0x${string}` | undefined;
 const RBTC_PRICE = parseFloat(process.env.NEXT_PUBLIC_RBTC_PRICE_USD || "95000");
@@ -52,8 +52,8 @@ export function VaultCard() {
   const [withdrawError, setWithdrawError] = useState<string | null>(null);
   const [txNotification, setTxNotification] = useState<{ status: TxStatus; hash?: string; type: "deposit" | "withdraw" } | null>(null);
 
-  const { writeContract: deposit, data: depositHash, error: depositTxError, isPending: isDepositPending } = useWriteContract();
-  const { writeContract: withdraw, data: withdrawHash, error: withdrawTxError, isPending: isWithdrawPending } = useWriteContract();
+  const { sendTransaction: depositTx, data: depositHash, error: depositTxError, isPending: isDepositPending } = useSendTransaction();
+  const { sendTransaction: withdrawTx, data: withdrawHash, error: withdrawTxError, isPending: isWithdrawPending } = useSendTransaction();
 
   const { isLoading: isDepositConfirming, isSuccess: isDepositSuccess } = useWaitForTransactionReceipt({ hash: depositHash });
   const { isLoading: isWithdrawConfirming, isSuccess: isWithdrawSuccess } = useWaitForTransactionReceipt({ hash: withdrawHash });
@@ -129,10 +129,10 @@ export function VaultCard() {
   const handleDeposit = () => {
     if (!VAULT_ADDRESS || !depositAmount) return;
     setDepositError(null);
-    deposit({
-      address: VAULT_ADDRESS,
-      abi: VAULT_ABI,
-      functionName: "deposit",
+    const data = encodeFunctionData({ abi: VAULT_ABI, functionName: "deposit" });
+    depositTx({
+      to: VAULT_ADDRESS,
+      data,
       value: parseEther(depositAmount),
       gas: BigInt(100000),
       gasPrice: BigInt(60000000),
@@ -142,11 +142,14 @@ export function VaultCard() {
   const handleWithdraw = () => {
     if (!VAULT_ADDRESS || !withdrawAmount) return;
     setWithdrawError(null);
-    withdraw({
-      address: VAULT_ADDRESS,
+    const data = encodeFunctionData({
       abi: VAULT_ABI,
       functionName: "withdraw",
       args: [parseEther(withdrawAmount)],
+    });
+    withdrawTx({
+      to: VAULT_ADDRESS,
+      data,
       gas: BigInt(100000),
       gasPrice: BigInt(60000000),
     });
