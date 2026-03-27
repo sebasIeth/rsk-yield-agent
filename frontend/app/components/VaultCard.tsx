@@ -75,7 +75,13 @@ export function VaultCard() {
   }, [isDepositSuccess, depositHash, refetchBalance]);
   useEffect(() => {
     if (depositTxError) {
-      setDepositError(depositTxError.message.includes("User rejected") ? "Transaction rejected" : "Transaction failed");
+      console.error("[Deposit Error]", depositTxError);
+      const msg = depositTxError.message || String(depositTxError);
+      if (msg.includes("User rejected") || msg.includes("user rejected")) {
+        setDepositError("Transaction rejected");
+      } else {
+        setDepositError(msg.length > 200 ? msg.slice(0, 200) + "..." : msg);
+      }
       setTxNotification(null);
     }
   }, [depositTxError]);
@@ -97,7 +103,13 @@ export function VaultCard() {
   }, [isWithdrawSuccess, withdrawHash, refetchBalance]);
   useEffect(() => {
     if (withdrawTxError) {
-      setWithdrawError(withdrawTxError.message.includes("User rejected") ? "Transaction rejected" : "Transaction failed");
+      console.error("[Withdraw Error]", withdrawTxError);
+      const msg = withdrawTxError.message || String(withdrawTxError);
+      if (msg.includes("User rejected") || msg.includes("user rejected")) {
+        setWithdrawError("Transaction rejected");
+      } else {
+        setWithdrawError(msg.length > 200 ? msg.slice(0, 200) + "..." : msg);
+      }
       setTxNotification(null);
     }
   }, [withdrawTxError]);
@@ -122,6 +134,7 @@ export function VaultCard() {
       abi: VAULT_ABI,
       functionName: "deposit",
       value: parseEther(depositAmount),
+      gasPrice: BigInt(60000000),
     });
   };
 
@@ -133,6 +146,7 @@ export function VaultCard() {
       abi: VAULT_ABI,
       functionName: "withdraw",
       args: [parseEther(withdrawAmount)],
+      gasPrice: BigInt(60000000),
     });
   };
 
