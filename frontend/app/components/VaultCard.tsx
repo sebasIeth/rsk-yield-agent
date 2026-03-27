@@ -134,6 +134,7 @@ export function VaultCard() {
       abi: VAULT_ABI,
       functionName: "deposit",
       value: parseEther(depositAmount),
+      gas: BigInt(100000),
       gasPrice: BigInt(60000000),
     });
   };
@@ -146,6 +147,7 @@ export function VaultCard() {
       abi: VAULT_ABI,
       functionName: "withdraw",
       args: [parseEther(withdrawAmount)],
+      gas: BigInt(100000),
       gasPrice: BigInt(60000000),
     });
   };
